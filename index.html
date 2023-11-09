@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Slideshow and Product Page</title>
+    <style>
+      .main-container {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 20px;
+        max-width: 100%;
+      }
+
+      .slideshow-container,
+      .right-container {
+        flex: 1; /* Each container will take up an equal amount of space */
+      }
+
+      .slideshow-container {
+        position: relative;
+        max-width: 50%;
+        overflow: hidden;
+      }
+
+      .slides {
+        display: flex;
+        transition: transform 0.5s ease;
+      }
+
+      .slide {
+        min-width: 100%;
+        box-sizing: border-box;
+      }
+
+      .dot-container {
+        text-align: center;
+        padding: 20px;
+        background: #ddd;
+      }
+
+      .dot {
+        cursor: pointer;
+        height: 15px;
+        width: 15px;
+        margin: 0 5px;
+        background-color: #bbb;
+        border-radius: 50%;
+        display: inline-block;
+        transition: background-color 0.6s ease;
+      }
+
+      .active,
+      .dot:hover {
+        background-color: #717171;
+      }
+
+      .product-container {
+        font-family: Arial, sans-serif;
+        max-width: 600px;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        text-align: center;
+      }
+      .product-container,
+      .tabular {
+        flex-direction: column;
+      }
+
+      .product-title {
+        font-size: 24px;
+        color: #333;
+      }
+
+      .reviews {
+        color: #777;
+        margin: 10px 0;
+      }
+
+      .star-rating {
+        color: #e6c300;
+      }
+
+      .quantity-box {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin: 20px 0;
+      }
+
+      .quantity-option {
+        border: 2px dashed #ccc;
+        padding: 10px;
+        border-radius: 10px;
+        flex-grow: 1;
+        cursor: pointer;
+      }
+
+      .quantity-option.selected {
+        border-style: solid;
+        background-color: #8fbc8f;
+      }
+
+      .purchase-options {
+        margin: 20px 0;
+      }
+
+      .subscribe {
+        font-size: 20px;
+        color: green;
+        border: 2px dashed green;
+        padding: 10px;
+        border-radius: 10px;
+        cursor: pointer;
+      }
+
+      .frequency {
+        margin: 20px 0;
+      }
+
+      .price {
+        font-size: 18px;
+        font-weight: bold;
+        color: green;
+      }
+
+      .strike {
+        text-decoration: line-through;
+        color: red;
+      }
+
+      .discount {
+        font-size: 24px;
+        color: green;
+        font-weight: bold;
+      }
+
+      .tabular {
+        overflow: cover;
+      }
+
+      .tab {
+        overflow: hidden;
+        background-color: #4caf50;
+      }
+
+      .tab button {
+        background-color: inherit;
+        float: left;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        padding: 14px 16px;
+        transition: 0.3s;
+        font-size: 17px;
+        color: white;
+      }
+
+      /* Change background color of buttons on hover */
+      .tab button:hover {
+        background-color: #3e8e41;
+      }
+
+      /* Create an active/current tablink class */
+      .tab button.active {
+        background-color: #333;
+      }
+
+      .tabcontent {
+        display: none;
+        padding: 6px 12px;
+        border: 1px solid #ccc;
+        border-top: none;
+      }
+
+      /* Style for the special note */
+      .special-note {
+        color: #ff0000;
+        font-weight: bold;
+      }
+
+      .prev,
+      .next {
+        cursor: pointer;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%); /* Centers the button vertically */
+        width: auto;
+        padding: 16px;
+        color: white;
+        font-weight: bold;
+        font-size: 18px;
+        transition: 0.6s ease;
+        border-radius: 0 3px 3px 0;
+        user-select: none;
+        background-color: rgba(0, 0, 0, 0.8);
+      }
+
+      /* Position the "next button" to the right */
+      .next {
+        right: 0;
+        border-radius: 3px 0 0 3px;
+      }
+
+      /* Position the "prev button" to the left */
+      .prev {
+        left: 0;
+        border-radius: 3px 0 0 3px;
+      }
+
+      /* Hover effect for the navigation buttons */
+      .prev:hover,
+      .next:hover {
+        background-color: rgba(0, 0, 0, 1);
+      }
+
+      @media (max-width: 768px) {
+        .main-container {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .slideshow-container,
+        .right-container {
+          max-width: 100%;
+          flex-basis: auto; /* Resets the flex basis */
+        }
+
+        .quantity-box,
+        .purchase-options {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .quantity-option {
+          width: 100%;
+          margin-bottom: 10px; /* Adds space between the options */
+        }
+
+        .dot-container button {
+          font-size: 12px; /* Reduces the font size of the buttons */
+        }
+
+        .subscribe {
+          width: 100%; /* Full width on smaller screens */
+        }
+      }
+
+      /* ... Other styles from your provided code ... */
+    </style>
+  </head>
+  <body>
+    <div class="main-container">
+      <div class="slideshow-container">
+        <div class="slides">
+          <!-- Add as many slides as you need -->
+          <div class="slide">
+            <img
+              src="https://www.graza.co/cdn/shop/files/graza-pdp-duo-header-3_2x_caa7f912-38b3-4e36-b928-ed6c036abfc7_720x.jpg?v=1698551972"
+              style="width: 100%"
+            />
+          </div>
+          <div class="slide">
+            <img
+              src="https://www.graza.co/cdn/shop/products/graza-pdp-sizzle-header-3_2x_98f6ef49-281f-4095-b8bb-3045391401fe_720x.jpg?v=1698551972"
+              style="width: 100%"
+            />
+          </div>
+          <div class="slide">
+            <img
+              src="https://www.graza.co/cdn/shop/products/graza-pdp-drizzle-header-3_2x_569477b7-acf0-4950-93a4-c263d6893aa4_720x.jpg?v=1698551972"
+              style="width: 100%"
+            />
+          </div>
+          <div class="slide">
+            <img
+              src="https://www.graza.co/cdn/shop/products/graza-home-drizzle-in-use_2x_91b89a03-a404-434d-ae48-fb97e37406ab_720x.jpg?v=1698551972"
+              style="width: 100%"
+            />
+          </div>
+          <div class="slide">
+            <img
+              src="https://www.graza.co/cdn/shop/products/graza-pdp-duo-header-2_2x_7673c33b-ecf4-43d9-b053-4261454c4f3c_720x.jpg?v=1698551972"
+              style="width: 100%"
+            />
+          </div>
+          <div class="slide">
+            <img
+              src="https://www.graza.co/cdn/shop/products/graza-home-sizzle-in-usecopy_2x_47ab5af6-0732-4835-96ba-9853798e5b9d_720x.jpg?v=1698551972"
+              style="width: 100%"
+            />
+          </div>
+        </div>
+
+        <a class="prev" onclick="moveSlide(-1)">&#10094;</a>
+        <a class="next" onclick="moveSlide(1)">&#10095;</a>
+
+        <div class="dot-container">
+          <span class="dot" onclick="goToSlide(0)"></span>
+          <span class="dot" onclick="goToSlide(1)"></span>
+          <span class="dot" onclick="goToSlide(2)"></span>
+          <span class="dot" onclick="goToSlide(3)"></span>
+          <span class="dot" onclick="goToSlide(4)"></span>
+          <span class="dot" onclick="goToSlide(5)"></span>
+        </div>
+      </div>
+      <div class="right-container">
+        <div class="product-container">
+          <h1 class="product-title">
+            "Drizzle" & "Sizzle" Extra Virgin Olive Oil
+          </h1>
+          <div class="reviews">
+            <span class="star-rating">★★★★★</span>
+            885 Reviews
+          </div>
+
+          <div class="quantity-box">
+            <div class="quantity-option selected">1 Set<br />+10% Off</div>
+            <div class="quantity-option">
+              2 Sets<br />Free Shipping! +14% Off
+            </div>
+            <div class="quantity-option">
+              3 Sets<br />Free Shipping! +15% Off
+            </div>
+            <div class="quantity-option">
+              6 Sets<br />Free Shipping! +17% Off
+            </div>
+          </div>
+
+          <div class="purchase-options">
+            <input type="radio" name="purchase" id="one-time" />
+            <label for="one-time">One Time Purchase</label>
+            <br />
+            <input type="radio" name="purchase" id="subscribe" checked />
+            <label for="subscribe">Subscribe & Save</label>
+            <div class="frequency">Frequency: Every 1 Month</div>
+          </div>
+
+          <div class="price">
+            <span class="strike">$37</span>
+            <span class="discount">$33.30</span>
+          </div>
+
+          <div class="subscribe">
+            Subscribe - $33.30
+            <div>Skip or Cancel Anytime</div>
+          </div>
+        </div>
+
+        <div class="tabular">
+          <div class="tab">
+            <button
+              class="tablinks"
+              onclick="openTab(event, 'Description')"
+              id="defaultOpen"
+            >
+              DESCRIPTION
+            </button>
+            <button class="tablinks" onclick="openTab(event, 'Harvest')">
+              HARVEST
+            </button>
+            <button class="tablinks" onclick="openTab(event, 'UseCases')">
+              USE CASES
+            </button>
+          </div>
+
+          <div id="Description" class="tabcontent">
+            <h3>DRIZZLE: 500ML</h3>
+            <p>
+              Extra Virgin finishing oil made from olives that are picked early,
+              when flavor is bold and antioxidants are highest. Made for eating,
+              never heating.
+            </p>
+            <h3>SIZZLE: 750ML</h3>
+            <p>
+              Extra Virgin cooking oil made from mature, mid-season olives that
+              yield a more mellow flavor. Use it every day, in every way.
+            </p>
+            <p class="special-note">
+              *HEADS UP! MULTIPLE SETS OF DRIZZLE & SIZZLE SHIP IN THE SAME BOX!
+              TO ORDER INDIVIDUALLY PACKAGED GIFT SETS,
+              <a href="#">CLICK HERE!</a> 🎁
+            </p>
+          </div>
+
+          <div id="Harvest" class="tabcontent">
+            <h3>DRIZZLE: 500ML</h3>
+            <p>
+              Extra Virgin finishing oil made from olives that are picked early,
+              when flavor is bold and antioxidants are highest. Made for eating,
+              never heating.
+            </p>
+            <h3>SIZZLE: 750ML</h3>
+            <p>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Laborum
+              debitis nobis ratione nesciunt quam laboriosam id vero rerum
+              architecto veniam omnis tenetur, ipsa error aut non sit! Fugiat,
+              porro alias.
+            </p>
+          </div>
+
+          <div id="UseCases" class="tabcontent">
+            <h3>DRIZZLE: 500ML</h3>
+            <p>
+              Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dolorem
+              autem officiis quam quisquam molestias assumenda officia alias
+              quasi, nihil, veritatis excepturi culpa recusandae eius earum
+              eaque temporibus optio dolore illo.
+            </p>
+            <h3>SIZZLE: 750ML</h3>
+            <p>
+              Extra Virgin cooking oil made from mature, mid-season olives that
+              yield a more mellow flavor. Use it every day, in every way.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      var slides = document.querySelectorAll(".slide");
+      var dots = document.querySelectorAll(".dot");
+      var slidesContainer = document.querySelector(".slides");
+      var currentIndex = 0;
+
+      // Function to move slides container to the current index
+      function updateSlidePosition() {
+        var offset = -currentIndex * 100; // Assuming each slide is 100% of the view width
+        slidesContainer.style.transform = "translateX(" + offset + "%)";
+        updateDots();
+      }
+
+      // Update the dots to match the current slide
+      function updateDots() {
+        dots.forEach(function (dot, index) {
+          dot.style.backgroundColor =
+            index === currentIndex ? "#717171" : "#bbb";
+        });
+      }
+
+      // Function to go to a specific slide
+      function goToSlide(targetIndex) {
+        currentIndex = targetIndex;
+        updateSlidePosition();
+      }
+
+      function moveSlide(step) {
+        currentIndex += step;
+        if (currentIndex >= slides.length) {
+          currentIndex = 0;
+        } else if (currentIndex < 0) {
+          currentIndex = slides.length - 1;
+        }
+        updateSlidePosition();
+      }
+
+      // Initialize the slideshow at the first slide
+      updateSlidePosition();
+
+      function openTab(evt, tabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+          tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+          tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.className += " active";
+      }
+
+      // Get the element with id="defaultOpen" and click on it
+      document.getElementById("defaultOpen").click();
+    </script>
+  </body>
+</html>
